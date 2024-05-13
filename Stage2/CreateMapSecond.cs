@@ -19,23 +19,11 @@ public class CreateMapSecond : MonoBehaviour
 
     [SerializeField] int stairCount = 150;
 
-    float originX;
-    float originY;
-    float originZ = 0;
-
     public float maxX = 6f;
     public float minX = -6f;
 
     public GameObject leftStair;
     public GameObject rightStair;
-    Vector3 leftOriginPos;
-    Vector3 rightOriginPos;
-
-    int randomDirectionLeft;
-    int randomDirectionRight;
-
-    Vector3 newLeftStair;
-    Vector3 newRightStair;
 
     public List<Vector3> stairList = new List<Vector3>();
 
@@ -56,13 +44,13 @@ public class CreateMapSecond : MonoBehaviour
     float memoryRate = 0.2f;
     int randomItem;
 
-    ProgressBaby progress;
+    ProgressControl progress;
 
     public GameObject cat;
 
     void Start()
     {
-        progress = cat.GetComponent<ProgressBaby>();
+        progress = cat.GetComponent<ProgressControl>();
 
         CreateFiveSix();
 
@@ -110,73 +98,6 @@ public class CreateMapSecond : MonoBehaviour
 
         }
 
-        /*leftOriginPos = leftStair.transform.position;
-        rightOriginPos = rightStair.transform.position;
-
-        for (int i = 0; i < stairCount; i++)
-        {
-            // 왼쪽 발판 위치 minX인지 검사
-            if (leftOriginPos.x <= minX)
-            {
-                randomDirectionLeft = DIR_RIGHT;
-                //Debug.Log("제일 왼쪽 - " + i);
-            }
-            else if (leftOriginPos.x >= maxX)
-            {
-                randomDirectionLeft = DIR_LEFT;
-            }
-            else
-            {
-                randomDirectionLeft = Random.Range(DIR_LEFT, DIR_RIGHT + 1);
-            }
-
-            // 왼쪽 발판 위에 생성하기
-            if (randomDirectionLeft == DIR_LEFT)
-            {
-                newLeftStair = new Vector3(leftOriginPos.x - 1.5f, leftOriginPos.y + 1.5f, leftOriginPos.z);
-                Instantiate(StairPrefab, newLeftStair, StairPrefab.transform.rotation);
-            }
-
-            else
-            {
-                newLeftStair = new Vector3(leftOriginPos.x + 1.5f, leftOriginPos.y + 1.5f, leftOriginPos.z);
-                Instantiate(StairPrefab, newLeftStair, StairPrefab.transform.rotation);
-            }
-
-            // 오른쪽 발판 위치 maxX인지 검사
-            if (rightOriginPos.x >= maxX)
-            {
-                randomDirectionRight = DIR_LEFT;
-                //Debug.Log("제일 오른쪽 - " + i);
-
-            }
-            else if (rightOriginPos.x <= minX)
-            {
-                randomDirectionRight = DIR_RIGHT;
-            }
-            else
-            {
-                randomDirectionRight = Random.Range(DIR_LEFT, DIR_RIGHT + 1);
-            }
-
-            // 오른쪽 발판 위에 생성하기
-            if (randomDirectionRight == DIR_LEFT)
-            {
-                newRightStair = new Vector3(rightOriginPos.x - 1.5f, rightOriginPos.y + 1.5f, rightOriginPos.z);
-                Instantiate(StairPrefab, newRightStair, StairPrefab.transform.rotation);
-            }
-            else
-            {
-                newRightStair = new Vector3(rightOriginPos.x + 1.5f, rightOriginPos.y + 1.5f, rightOriginPos.z);
-                Instantiate(StairPrefab, newRightStair, StairPrefab.transform.rotation);
-            }
-
-            leftOriginPos = newLeftStair;
-            rightOriginPos = newRightStair;
-
-            stairList.Add(newLeftStair);
-            stairList.Add(newRightStair);
-        }*/
     }
     public void ListShuffle<T>(List<T> list)
     {
@@ -243,7 +164,7 @@ public class CreateMapSecond : MonoBehaviour
 
             startPosY += 2.5f;
         }
-        progress._maxHeight = startPosY - 2.5f;
+        progress.MaxHeight = startPosY - 2.5f;
 
     }
 

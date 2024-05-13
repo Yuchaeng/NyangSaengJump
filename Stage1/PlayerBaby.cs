@@ -14,15 +14,16 @@ public class PlayerBaby : PlayerHPBase
     protected override void Start()
     {
         base.Start();
-
+        Debug.Log($"myHp{playerHp}");
         playerHp = 30;
         playerHpMax = 30;
         playerHpSlider.value = playerHp / playerHpMax;
-        
+        Debug.Log($"myHp 2 {playerHp}");
+
+
         targetMaterial = GameObject.Find("cat").GetComponentInChildren<SkinnedMeshRenderer>();
 
-        ratCrashed = false;
-        
+        ratCrashed = false;  
     }
 
     protected override void Update()

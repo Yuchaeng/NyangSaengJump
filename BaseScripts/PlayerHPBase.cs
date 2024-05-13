@@ -20,6 +20,7 @@ public class PlayerHPBase : MonoBehaviour
     protected virtual void Start()
     {
         animator = GetComponent<Animator>();
+        Debug.Log("baseHp");
     }
 
     protected virtual void Update()
