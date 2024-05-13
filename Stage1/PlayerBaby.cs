@@ -10,25 +10,30 @@ public class PlayerBaby : PlayerHPBase
     float delayTime = 1;
     public SkinnedMeshRenderer targetMaterial;
     bool ratCrashed;
+    private float _currentHp;
+    private float _maxHp;
+    public override float playerHp { get => _currentHp; set => _currentHp = value; }
+    public override float playerHpMax { get => _maxHp; set => _maxHp = value; }
 
     protected override void Start()
     {
-        base.Start();
-        Debug.Log($"myHp{playerHp}");
-        playerHp = 30;
-        playerHpMax = 30;
-        playerHpSlider.value = playerHp / playerHpMax;
-        Debug.Log($"myHp 2 {playerHp}");
+        _currentHp = 30f;
+        _maxHp = 30f;
 
+        Debug.Log($"myHp 자식에서 호출 {playerHp}");
 
         targetMaterial = GameObject.Find("cat").GetComponentInChildren<SkinnedMeshRenderer>();
+        ratCrashed = false;
 
-        ratCrashed = false;  
+        base.Start();
+
     }
 
     protected override void Update()
     {
-      
+        base.Update();
+        Debug.Log($"myHp 자식에서 호출 {playerHp}");
+
         if (ratCrashed)
         {
             moveBase.isMovable = false;
@@ -70,12 +75,5 @@ public class PlayerBaby : PlayerHPBase
         }
 
     }
-
-
-
-   
-
-
-
 
 }

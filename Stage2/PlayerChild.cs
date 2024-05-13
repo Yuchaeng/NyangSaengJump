@@ -7,19 +7,16 @@ using UnityEngine.UIElements.Experimental;
 
 public class PlayerChild : PlayerHPBase
 {
-
+    private float _currentHp;
+    private float _maxHp;
+    public override float playerHp { get => _currentHp; set => _currentHp = value; }
+    public override float playerHpMax { get => _maxHp; set => _maxHp = value; }
 
     protected override void Start()
     {
+        _currentHp = 45f;
+        _maxHp = 45f;
         base.Start();
-
-        playerHp = 60;
-        playerHpMax = 60;
-        playerHpSlider.value = playerHp / playerHpMax;
-
-
-        //Stage2Manager.Instance.StopGame();
-
     }
 
  }

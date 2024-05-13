@@ -5,11 +5,11 @@ using Unity.VisualScripting;
 
 public abstract class PlayerMoveBase : MonoBehaviour
 {
-    public Rigidbody _myRigid;
+    [HideInInspector] public Rigidbody myRigid;
     protected Animator _animator;
 
-    protected Ray _ray;
-    protected Ray _rayDown;
+    protected Ray ray;
+    protected Ray rayDown;
     public LayerMask stairLayer;
 
     private Vector3 _fwd;
@@ -20,25 +20,24 @@ public abstract class PlayerMoveBase : MonoBehaviour
 
     [SerializeField] private float _jumpForce = 5;
     [SerializeField] private bool _isJumping = false;
-    public bool isMovable;
     [SerializeField] private float _xValue;
     [SerializeField] private float _yValue;
+    public bool isMovable;
+    public bool fallButLive;
+    public bool isFallAndDie;
 
     protected GameObject lastStair;
     protected GameObject currentStair;
 
-    public bool isFallAndDie;
     [SerializeField] private bool isStun;
-    float currentTime = 0;
-    float stunTime = 2;
+    private float _currentTime = 0;
+    private float _stunTime = 2;
 
-    public bool fallButLive;
-
-    ItemPickUp _itemPickUp;
+    private ItemPickUp _itemPickUp;
     
     protected virtual void Start()
     {
-        _myRigid = GetComponent<Rigidbody>();
+        myRigid = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
         _itemPickUp = GetComponent<ItemPickUp>();
 
@@ -53,26 +52,22 @@ public abstract class PlayerMoveBase : MonoBehaviour
         if (Input.touchCount > 0)
         {
             if (Input.GetTouch(0).position.x > Screen.width / 2 && _isJumping == false)  // 화면 가로 중간보다 오른쪽 영역
-            {
-                
+            {                
                 _animator.Play("Jump");
 
                 _isJumping = true;
-
                
                 transform.eulerAngles = new Vector3(-9f, 120f, 7f);
-                _myRigid.velocity = new Vector3(_xValue, _yValue, 0.0f) * _jumpForce;
+                myRigid.velocity = new Vector3(_xValue, _yValue, 0.0f) * _jumpForce;
             }
             else if (Input.GetTouch(0).position.x < Screen.width / 2 && _isJumping == false)
-            {
-               
+            {               
                 _animator.Play("Jump");
 
                 _isJumping = true;
-
                 
                 transform.eulerAngles = new Vector3(-9f, 240f, -7f);
-                _myRigid.velocity = new Vector3(-_xValue, _yValue, 0.0f) * _jumpForce;
+                myRigid.velocity = new Vector3(-_xValue, _yValue, 0.0f) * _jumpForce;
             }
         }
 
@@ -85,12 +80,11 @@ public abstract class PlayerMoveBase : MonoBehaviour
 
             transform.eulerAngles = new Vector3(0.0f, 110f, 0.0f);
 
-            _myRigid.velocity = new Vector3(_xValue, _yValue, 0.0f) * _jumpForce;
+            myRigid.velocity = new Vector3(_xValue, _yValue, 0.0f) * _jumpForce;
 
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow) && _isJumping == false && isMovable)
         {
-
             _animator.Play("Jump");
 
             _isJumping = true;
@@ -98,31 +92,31 @@ public abstract class PlayerMoveBase : MonoBehaviour
 
             transform.eulerAngles = new Vector3(0.0f, 250f, 0.0f);
 
-            _myRigid.velocity = new Vector3(-_xValue, _yValue, 0.0f) * _jumpForce;
+            myRigid.velocity = new Vector3(-_xValue, _yValue, 0.0f) * _jumpForce;
         }
     }
 
     protected virtual void FixedUpdate()
     {
         _fwd = transform.TransformDirection(Vector3.forward + Vector3.up * RayUpDistance);
-        _ray = new Ray(transform.position, _fwd);
+        ray = new Ray(transform.position, _fwd);
         RaycastHit hit;
         Debug.DrawRay(transform.position, _fwd * RayUpCastingDistance, Color.red);
 
-        if (Physics.Raycast(_ray, out hit, RayUpCastingDistance, stairLayer))
+        if (Physics.Raycast(ray, out hit, RayUpCastingDistance, stairLayer))
         {
             Debug.Log("위에 있는");
             Vector3 correctPos = new Vector3(hit.collider.bounds.center.x, hit.collider.bounds.center.y + 0.2f, 0);
-            _myRigid.DOMove(correctPos, 0.1f);
+            myRigid.DOMove(correctPos, 0.1f);
             //_myRigid.MovePosition(correctPos);
         }
 
 
-        _rayDown = new Ray(transform.position, Vector3.down);
+        rayDown = new Ray(transform.position, Vector3.down);
         RaycastHit downHit;
         Debug.DrawRay(transform.position, Vector3.down * RayDownCastingDistance, Color.blue);
 
-        if (Physics.Raycast(_rayDown, out downHit, RayDownCastingDistance, stairLayer))
+        if (Physics.Raycast(rayDown, out downHit, RayDownCastingDistance, stairLayer))
         {
             if (transform.position.x != downHit.collider.bounds.center.x)
             {
@@ -133,7 +127,7 @@ public abstract class PlayerMoveBase : MonoBehaviour
         // 낙하 판정
         if (_itemPickUp.isCatnipMove)
         {
-            // 캣닙먹고 위로 뛰었는데 옆으로 점프했다가 빠져서 추락하면 게임오버
+            // 캣닢먹고 위로 뛰었는데 옆으로 점프했다가 빠져서 추락하면 게임오버
 
             if (lastStair.transform.position.y - transform.position.y >= 10f)
             {
@@ -146,14 +140,14 @@ public abstract class PlayerMoveBase : MonoBehaviour
         {
             // 스턴 걸린 경우, 스턴 중에는 판정X
 
-            currentTime += Time.fixedDeltaTime;
+            _currentTime += Time.fixedDeltaTime;
 
-            if (currentTime > stunTime)
+            if (_currentTime > _stunTime)
             {
                 isStun = false;
                 isMovable = true;
                 lastStair = null;   // 이렇게 안하면 계속 판정해서 스턴 안풀림
-                currentTime = 0;
+                _currentTime = 0;
             }
         }
         else if (currentStair != null && lastStair != null)
@@ -172,7 +166,6 @@ public abstract class PlayerMoveBase : MonoBehaviour
                 fallButLive = true;
                 isMovable = false;
             }
-
 
         }
 
