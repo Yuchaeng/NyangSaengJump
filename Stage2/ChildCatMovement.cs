@@ -53,7 +53,7 @@ public class ChildCatMovement : PlayerMoveBase
         if (collision.gameObject.CompareTag("Enemy"))
         {
             crashMonster = true;
-            Stage2Manager.Instance.StopGame();
+            StageManager.Instance.StopGame();
         }
 
         
